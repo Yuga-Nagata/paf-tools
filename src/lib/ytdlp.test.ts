@@ -32,11 +32,16 @@ describe("ytdlp", () => {
     const mockChild = new EventEmitter() as any;
     mockChild.stdout = mockStdout;
     mockChild.stderr = new Readable({ read() {} });
+    mockChild.kill = vi.fn();
+    mockChild.exitCode = null;
     
     vi.mocked(spawn).mockReturnValue(mockChild);
 
     // Simulate process exit
-    setTimeout(() => mockChild.emit("close", 0), 10);
+    setTimeout(() => {
+      mockChild.exitCode = 0;
+      mockChild.emit("close", 0);
+    }, 10);
 
     const generator = fetchChannelVideos("UC123");
     const results: any[] = [];
@@ -60,9 +65,14 @@ describe("ytdlp", () => {
     const mockChild = new EventEmitter() as any;
     mockChild.stdout = mockStdout;
     mockChild.stderr = new Readable({ read() {} });
+    mockChild.kill = vi.fn();
+    mockChild.exitCode = null;
     
     vi.mocked(spawn).mockReturnValue(mockChild);
-    setTimeout(() => mockChild.emit("close", 0), 10);
+    setTimeout(() => {
+      mockChild.exitCode = 0;
+      mockChild.emit("close", 0);
+    }, 10);
 
     const generator = fetchChannelVideos("UC123");
     const results: any[] = [];
@@ -79,9 +89,14 @@ describe("ytdlp", () => {
     const mockChild = new EventEmitter() as any;
     mockChild.stdout = mockStdout;
     mockChild.stderr = new Readable({ read() {} });
+    mockChild.kill = vi.fn();
+    mockChild.exitCode = null;
     
     vi.mocked(spawn).mockReturnValue(mockChild);
-    setTimeout(() => mockChild.emit("close", 1), 10);
+    setTimeout(() => {
+      mockChild.exitCode = 1;
+      mockChild.emit("close", 1);
+    }, 10);
 
     const generator = fetchChannelVideos("UC123");
     await expect(async () => {

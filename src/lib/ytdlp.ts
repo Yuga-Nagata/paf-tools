@@ -74,17 +74,25 @@ export async function* fetchChannelVideos(channelId: string): AsyncGenerator<Vid
     }
   } finally {
     // Kill the process if it's still running (e.g. generator closed early)
-    if (child.exitCode === null) {
+    if (child.exitCode === null || child.exitCode === undefined) {
       child.kill("SIGTERM");
     }
 
-    // Ensure the process is closed before finishing
-    await new Promise<void>((resolve) => {
-      if (child.exitCode !== null) {
-        resolve();
-      } else {
-        child.on("close", resolve);
+    // Ensure the process is closed before finishing and throw if it failed
+    await new Promise<void>((resolve, reject) => {
+      // If already exited, resolve/reject immediately
+      if (typeof child.exitCode === "number") {
+        if (child.exitCode === 0) resolve();
+        else reject(new Error(`yt-dlp process exited with code ${child.exitCode}`));
+        return;
       }
+
+      // Otherwise wait for close
+      child.on("close", (code) => {
+        if (code === 0 || code === null) resolve();
+        else reject(new Error(`yt-dlp process exited with code ${code}`));
+      });
+      child.on("error", reject);
     });
   }
 }
