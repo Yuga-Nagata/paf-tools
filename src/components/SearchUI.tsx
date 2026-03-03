@@ -29,6 +29,8 @@ import {
   Grid,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import InfoIcon from "@mui/icons-material/Info";
+import NextLink from "next/link";
 import { SearchResponse, SearchResult } from "@/lib/types";
 
 /**
@@ -144,6 +146,18 @@ export default function SearchUI(): React.JSX.Element {
         >
           {loading ? "検索中..." : "検索"}
         </Button>
+      </Box>
+
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
+        <Link 
+          component={NextLink} 
+          href="/songs/basis" 
+          variant="body2" 
+          sx={{ display: "flex", alignItems: "center", textDecoration: "none", opacity: 0.7, "&:hover": { opacity: 1 } }}
+        >
+          <InfoIcon sx={{ fontSize: 16, mr: 0.5 }} />
+          利用許諾の根拠について
+        </Link>
       </Box>
 
       {notSynced && (
